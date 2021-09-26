@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-burglerladstasks-dev-80052-authRole",
+      "UnauthRoleArn": "arn:aws:iam::815557975901:role/amplify-burglerladstasks-dev-80052-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::815557975901:role/amplify-burglerladstasks-dev-80052-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-burglerladstasks-dev-80052-deployment",
+      "UnauthRoleName": "amplify-burglerladstasks-dev-80052-unauthRole",
+      "StackName": "amplify-burglerladstasks-dev-80052",
+      "StackId": "arn:aws:cloudformation:us-west-2:815557975901:stack/amplify-burglerladstasks-dev-80052/abb00140-1c76-11ec-8bba-0af64a9d6175",
+      "AmplifyAppId": "d2b95oablk094f"
+    },
+    "categories": {
+      "auth": {
+        "burglerladstasks4ac8ea95": {}
+      }
+    }
+  }
+}

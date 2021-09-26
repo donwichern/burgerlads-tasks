@@ -1,0 +1,176 @@
+"""
+A TaskList is at the top level of the list definition. Tasks have
+multiple sections and each section has multiple tasks.
+A List also has multiple result entries for each time the list was
+completed.
+"""
+type TaskList @model {
+  id: ID!
+  title: String
+  description: String
+  """
+  A list of sections belonging to the TaskList
+  """
+  taskSections: [TaskSection] @connection(keyName: "ListSection_k", fields: ["id"])
+  """
+  A list of schedules belonging to the TaskList
+  """
+  taskSchedules: [TaskSchedule] @connection(keyName: "ListSchedule_k", fields: ["id"])  
+  """
+  A list results belonging to this TaskList
+  """
+  taskListResults: [TaskListResult] @connection(keyName: "ListListResult_k", fields: ["id"])
+}
+
+"""
+A TaskSection contains a list of TaskItems for a TaskList
+"""
+type TaskSection 
+  @model 
+  @key(name: "ListSection_k", fields: ["taskListID"])
+{
+  id: ID!
+  title: String
+  description: String
+  displayOrder: Float
+
+  """
+  The TaskList that owns this TaskSection
+  """
+  taskListID: ID!
+  taskList: TaskList @connection(fields: ["taskListID"]) 
+  """
+  List of TaskItems belonging to this TaskSection
+  """
+  taskItems: [TaskItem] @connection(keyName: "SectionTask_k", fields: ["id"])
+  """
+  List of results belonging to this task section
+  """
+  taskSectionResults: [TaskSectionResult] @connection(keyName: "SectionSectionResult_k", fields: ["id"])
+}
+
+"""
+A TaskItem contains a specific unit of work for a TaskList
+"""
+type TaskItem 
+  @model 
+  @key(name: "SectionTask_k", fields: ["taskSectionID"])
+{
+  id: ID!
+  name: String
+  description: String
+  displayOrder: Float
+  resultType: String
+
+  """
+  The TaskSection that owns this TaskItem
+  """
+  taskSectionID: ID!
+  taskSection: TaskSection @connection(fields: ["taskSectionID"])
+  """
+  List of results belonging to this task item
+  """
+  taskItemResults: [TaskItemResult] @connection(keyName: "ItemItemResult_k", fields: ["id"])
+}
+
+"""
+A TaskListResult is a specific completed instance of a TaskList
+"""
+type TaskListResult 
+  @model 
+  @key(name: "ListListResult_k", fields: ["taskListID"])
+{
+  id: ID!
+  started: AWSDateTime
+  completed: AWSDateTime
+
+  """
+  The TaskList that owns this Result
+  """
+  taskListID: ID!
+  taskList: TaskList @connection(fields: ["taskListID"])
+  """
+  List of section results associated with this list result
+  """
+  taskSectionResults: [TaskSectionResult] @connection(keyName: "ListResultSectionResult_k", fields: ["id"])
+}
+
+"""
+A TaskSectionResult is a specific completed instance of a TaskSection
+"""
+type TaskSectionResult 
+  @model
+  @key(name: "SectionSectionResult_k", fields: ["taskSectionID"])
+  @key(name: "ListResultSectionResult_k", fields: ["taskListResultID"])
+{
+  id: ID!
+  """
+  The TaskListResult that owns this Result
+  """
+  taskListResultID: ID!
+  taskListResult: TaskListResult @connection(fields: ["taskListResultID"])
+  """
+  The TaskSection that owns this result
+  """
+  taskSectionID: ID!
+  taskSection: TaskSection @connection(fields: ["taskSectionID"])
+  """ List of task item results associated with this list result
+  """
+  taskItemResults: [TaskItemResult] @connection(keyName: "SectionResultItemResult_k", fields: ["id"])
+}
+
+"""
+A TaskItemResult is a specific completed instance of a TaskItem
+"""
+type TaskItemResult 
+  @model
+  @key(name: "ItemItemResult_k", fields: ["taskItemID"]) 
+  @key(name: "SectionResultItemResult_k", fields: ["taskItemID"])
+{
+  id: ID!
+  result: String
+  note: String
+  timestamp: AWSDateTime
+  updatedBy: String
+  """
+  The TaskSectionResult that owns this result
+  """
+  taskSectionResultID: ID!
+  taskSectionResult: TaskSectionResult @connection(fields: ["taskSectionResultID"])
+  """
+  The TaskItem that owns this result
+  """
+  taskItemID: ID!
+  taskItem: TaskItem @connection(fields: ["taskItemID"])
+}
+
+"""
+A TaskSchedule lists when a TaskList becomes available for completion
+"""
+type TaskSchedule 
+  @model 
+  @key(name: "ListSchedule_k", fields: ["taskListID"])
+{
+  id: ID!
+  """
+  Date this schedule becomes effective
+  """
+  startdate: AWSDate
+  """
+  Date this schedule becomes expires
+  """
+  stopdate: AWSDate
+  """
+  Time of day this schedule becomes available
+  """
+  starttime: AWSTime
+  """
+  Time of day this schedule is due
+  """
+  stoptime: AWSTime
+  """
+  List that owns this schedule
+  """
+  taskListID: ID!
+  taskList: TaskList @connection(fields: ["taskListID"])
+}
