@@ -1,11 +1,25 @@
+import React from 'react'
+import { AmplifySignOut, withAuthenticator } from '@aws-amplify/ui-react';
+import { Container, createTheme, CssBaseline, ThemeProvider } from '@material-ui/core';
+import DisplayAllLists from './components/DisplayAllLists';
+import UploadListFromFile from './components/UploadListFromFile';
 
+const muiTheme = createTheme();
 
-function App() {
+const App = () => {
   return (
-    <div>
-      <h1>Test</h1>
-    </div>
-  );
+    <ThemeProvider theme={muiTheme}>
+      <CssBaseline />
+
+      <Container maxWidth="lg">
+
+        <UploadListFromFile />
+        <DisplayAllLists />
+
+        <AmplifySignOut />
+      </Container>
+    </ThemeProvider>
+  )
 }
 
-export default App;
+export default withAuthenticator(App);
