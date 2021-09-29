@@ -1,24 +1,31 @@
 import React from 'react'
 import { AmplifySignOut, withAuthenticator } from '@aws-amplify/ui-react';
-import { Container, createTheme, CssBaseline, ThemeProvider } from '@material-ui/core';
+
 import DisplayAllLists from './components/DisplayAllLists';
 import UploadListFromFile from './components/UploadListFromFile';
-
-const muiTheme = createTheme();
+import ScheduleTaskList from './components/ScheduleTaskList';
+import { LocalizationProvider } from '@mui/lab';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { Container, CssBaseline } from '@mui/material';
 
 const App = () => {
   return (
-    <ThemeProvider theme={muiTheme}>
-      <CssBaseline />
-
+    <>
+    <CssBaseline />
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Container maxWidth="lg">
 
+        <br />
         <UploadListFromFile />
+        <br />
         <DisplayAllLists />
+        <br />
+        <ScheduleTaskList />
 
         <AmplifySignOut />
       </Container>
-    </ThemeProvider>
+    </LocalizationProvider>
+    </>
   )
 }
 

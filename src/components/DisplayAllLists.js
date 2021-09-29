@@ -1,5 +1,6 @@
 import API from '@aws-amplify/api'
 import React, {useState, useEffect} from 'react'
+import DoList from './DoList';
 
 // Query traversing enough levels to return complete task
 const qGetAllTaskLists = `
@@ -43,48 +44,53 @@ const DisplayAllLists = () => {
     async function fetchTaskLists() {
         const rval = await API.graphql({query: qGetAllTaskLists});
 
-        console.log(rval);
-        let tasklists = rval.data.listTaskLists.items;
-        console.log(tasklists);
+        //console.log(rval);
+        let tLists = rval.data.listTaskLists.items;
+        //console.log(tLists);
 
-        for (let tlidx=0; tlidx<tasklists.length; tlidx++) {
-            let tasklist = tasklists[tlidx];
-            console.log(tasklist.title);
-            console.log(tasklist.description);
-
-            let tasksections = tasklist.tasksections.items;
-            tasklist.tasksections.items = tasksections.sort(
+        for (let tlidx=0; tlidx<tLists.length; tlidx++) {
+            let tList = tLists[tlidx];
+            //console.log(tList.title);
+            //console.log(tList.description);
+            
+            let tSections = tList.taskSections.items;            
+            tList.taskSections.items = tSections.sort(
                 function(a, b) {
                     return(parseFloat(a.displayOrder)-parseFloat(b.displayOrder));
                 }
             );
-            tasksections = tasklist.tasksections.items;
+            tSections = tList.taskSections.items;
 
-            for (let tsidx=0; tsidx<tasksections.length; tsidx++) {
-                let tasksection = tasksections[tsidx];
-                console.log(tasksection.title);
+            for (let tsidx=0; tsidx<tSections.length; tsidx++) {
+                let tSection = tSections[tsidx];
+                //console.log(tSection.title);
 
-                let taskitems = tasksection.taskitems.items;
-                tasksection.taskitems.items = taskitems.sort(
+                let tItems = tSection.taskItems.items;
+                tSection.taskItems.items = tItems.sort(
                     function(a, b) {
                         return(parseFloat(a.displayOrder)-parseFloat(b.displayOrder));
                     }
                 )
-                taskitems = tasksection.taskitems.items;
+                tItems = tSection.taskItems.items;
 
-                for (let tiidx=0; tiidx<taskitems.length; tiidx++) {
-                    let taskitem = taskitems[tiidx];
-                    console.log(taskitem.displayOrder, taskitem.name);
+                for (let tiidx=0; tiidx<tItems.length; tiidx++) {
+                    let tItem = tItems[tiidx];
+                    //console.log(tItem.displayOrder, tItem.name);
                 }
             }
         }
 
-        setTaskLists(tasklists);
+        setTaskLists(tLists);
     }
 
     return (
         <div>
-            
+            <br />
+            {taskLists.map(taskList => (
+                <React.Fragment key = {taskList.id}>
+                    <DoList taskList={taskList} />
+                </React.Fragment>
+            ))}
         </div>
     )
 }

@@ -1,5 +1,5 @@
 import API from '@aws-amplify/api';
-import { Button } from '@material-ui/core';
+import { Button } from '@mui/material';
 import React from 'react'
 
 import {createTaskItem as createTaskItemMutation} from '../graphql/mutations'; 
@@ -7,7 +7,7 @@ import {createTaskList as createTaskListMutation} from '../graphql/mutations';
 import {createTaskSection as createTaskSectionMutation} from '../graphql/mutations';
 
 
-const UploadListFromFile = () => {
+const UploadListFromFile = () => {    
 
     // Create the list part
     async function runCreateMutation(mutation, info) {
@@ -17,6 +17,10 @@ const UploadListFromFile = () => {
         };
 
         let rval = await API.graphql(q);
+
+        console.log(rval);
+
+        return (rval.data);
 
     }    
 
@@ -35,6 +39,9 @@ const UploadListFromFile = () => {
     
     async function parseNewListFile(data) {
 
+        console.log("here");
+        console.log(data);
+
         let parseData = [];
 
         const PART_TYPE_I = 0;
@@ -47,6 +54,7 @@ const UploadListFromFile = () => {
         let sectionId = "";
 
         let lines = data.split("\n");
+        console.log(lines);
         for (let i=1; i<lines.length; i++) {
             let t = lines[i].split("\t");
             t = t.map(s => s.trim());
@@ -59,7 +67,8 @@ const UploadListFromFile = () => {
 
             if (parttype === "List") {
                 let info = {title: name, description: desc};
-                listId = await runCreateMutation(createTaskListMutation, info);
+                let tmp = await runCreateMutation(createTaskListMutation, info); 
+                listId = tmp.createTaskList.id;
             }
             else if (parttype === "Section") {
                 let info = {
@@ -67,8 +76,9 @@ const UploadListFromFile = () => {
                     description: desc, 
                     displayOrder: displayorder,
                     taskListID: listId
-                };
-                sectionId = await runCreateMutation(createTaskSectionMutation, info);
+                };                
+                let tmp = await runCreateMutation(createTaskSectionMutation, info);                
+                sectionId = tmp.createTaskSection.id;
             }
             else if (parttype === "Task") {
                 let info = {
@@ -78,7 +88,8 @@ const UploadListFromFile = () => {
                     resultType: datatype,
                     taskSectionID: sectionId
                 }
-                await runCreateMutation(createTaskItemMutation, info);
+                let tmp = await runCreateMutation(createTaskItemMutation, info);
+                let taskId = tmp.createTaskItem.id;
             }
             
 
