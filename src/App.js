@@ -7,25 +7,40 @@ import ScheduleTaskList from './components/ScheduleTaskList';
 import { LocalizationProvider } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { Container, CssBaseline } from '@mui/material';
+import DisplayActiveLists from './components/DisplayActiveLists';
+
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from 'react-router-dom';
 
 const App = () => {
   return (
-    <>
-    <CssBaseline />
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Container maxWidth="lg">
-
+    <Router>
+      <CssBaseline />
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <Container maxWidth="lg">
+          <br />
+          <Switch>
+            <Route path='/schedule'>
+              <ScheduleTaskList />
+            </Route>
+            <Route path='/upload'>
+              <UploadListFromFile />
+            </Route>
+            <Route path='/dolist'>
+              <DisplayAllLists />
+            </Route>
+            <Route path='/'>
+              <DisplayActiveLists />
+            </Route>
+          </Switch>
+          <AmplifySignOut />
+        </Container>
         <br />
-        <UploadListFromFile />
-        <br />
-        <DisplayAllLists />
-        <br />
-        <ScheduleTaskList />
-
-        <AmplifySignOut />
-      </Container>
-    </LocalizationProvider>
-    </>
+      </LocalizationProvider>
+    </Router>
   )
 }
 

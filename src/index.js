@@ -4,6 +4,9 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+//GraphQL endpoint: https://ynrqpcdqwfaifbinduobmjpilm.appsync-api.us-west-2.amazonaws.com/graphql
+//GraphQL API KEY: da2-3h7b7czngrb4llmrdlllcqyrxi
+
 import Amplify from 'aws-amplify';
 import config from './aws-exports';
 

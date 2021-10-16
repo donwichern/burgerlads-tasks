@@ -46,7 +46,7 @@ const DoSection = ({taskSection, reportTaskProgress}) => {
 
     return (
         <>
-            <Accordion>                
+            <Accordion >                
                 <AccordionSummary expandIcon={<ExpandMore />}>
                     <Box sx={{width: '100%'}}>
                         <Typography variant="h6">{taskSection.title}</Typography>
@@ -58,7 +58,7 @@ const DoSection = ({taskSection, reportTaskProgress}) => {
                     </Box>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <Grid container spacing={2}>
+                    <Grid container spacing={2} >
                         {taskSection.taskItems.items.map(taskItem => (
                             <React.Fragment key={taskItem.id}>
                                 <Grid item xs={9}>{taskItem.name}</Grid>

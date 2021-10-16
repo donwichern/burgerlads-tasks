@@ -2,6 +2,7 @@ import { Box, Grid, Paper, Typography } from '@mui/material'
 import React, {useState, useEffect} from 'react'
 import DoSection from './DoSection'
 import CircularProgressWithLabel from './CircularProgressWithLabel';
+import { grey } from '@mui/material/colors';
 
 const DoList = ({taskList}) => {
 
@@ -33,7 +34,7 @@ const DoList = ({taskList}) => {
     };
 
     return (
-        <Paper elevation={2} >
+        <Paper elevation={2} sx={{bgcolor: '#f0f0f0'}}>
 
             <Box ml={2} mr={2}>
                 <br />

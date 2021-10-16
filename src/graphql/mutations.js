@@ -38,9 +38,11 @@ export const createTaskList = /* GraphQL */ `
       taskListResults {
         items {
           id
+          created
           started
           completed
           taskListID
+          taskScheduleID
           createdAt
           updatedAt
         }
@@ -88,9 +90,11 @@ export const updateTaskList = /* GraphQL */ `
       taskListResults {
         items {
           id
+          created
           started
           completed
           taskListID
+          taskScheduleID
           createdAt
           updatedAt
         }
@@ -138,9 +142,11 @@ export const deleteTaskList = /* GraphQL */ `
       taskListResults {
         items {
           id
+          created
           started
           completed
           taskListID
+          taskScheduleID
           createdAt
           updatedAt
         }
@@ -482,6 +488,7 @@ export const createTaskListResult = /* GraphQL */ `
   ) {
     createTaskListResult(input: $input, condition: $condition) {
       id
+      created
       started
       completed
       taskListID
@@ -494,6 +501,27 @@ export const createTaskListResult = /* GraphQL */ `
         }
         taskSchedules {
           nextToken
+        }
+        taskListResults {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      taskScheduleID
+      taskSchedule {
+        id
+        startdate
+        stopdate
+        starttime
+        stoptime
+        taskListID
+        taskList {
+          id
+          title
+          description
+          createdAt
+          updatedAt
         }
         taskListResults {
           nextToken
@@ -523,6 +551,7 @@ export const updateTaskListResult = /* GraphQL */ `
   ) {
     updateTaskListResult(input: $input, condition: $condition) {
       id
+      created
       started
       completed
       taskListID
@@ -535,6 +564,27 @@ export const updateTaskListResult = /* GraphQL */ `
         }
         taskSchedules {
           nextToken
+        }
+        taskListResults {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      taskScheduleID
+      taskSchedule {
+        id
+        startdate
+        stopdate
+        starttime
+        stoptime
+        taskListID
+        taskList {
+          id
+          title
+          description
+          createdAt
+          updatedAt
         }
         taskListResults {
           nextToken
@@ -564,6 +614,7 @@ export const deleteTaskListResult = /* GraphQL */ `
   ) {
     deleteTaskListResult(input: $input, condition: $condition) {
       id
+      created
       started
       completed
       taskListID
@@ -576,6 +627,27 @@ export const deleteTaskListResult = /* GraphQL */ `
         }
         taskSchedules {
           nextToken
+        }
+        taskListResults {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      taskScheduleID
+      taskSchedule {
+        id
+        startdate
+        stopdate
+        starttime
+        stoptime
+        taskListID
+        taskList {
+          id
+          title
+          description
+          createdAt
+          updatedAt
         }
         taskListResults {
           nextToken
@@ -608,6 +680,7 @@ export const createTaskSectionResult = /* GraphQL */ `
       taskListResultID
       taskListResult {
         id
+        created
         started
         completed
         taskListID
@@ -615,6 +688,17 @@ export const createTaskSectionResult = /* GraphQL */ `
           id
           title
           description
+          createdAt
+          updatedAt
+        }
+        taskScheduleID
+        taskSchedule {
+          id
+          startdate
+          stopdate
+          starttime
+          stoptime
+          taskListID
           createdAt
           updatedAt
         }
@@ -676,6 +760,7 @@ export const updateTaskSectionResult = /* GraphQL */ `
       taskListResultID
       taskListResult {
         id
+        created
         started
         completed
         taskListID
@@ -683,6 +768,17 @@ export const updateTaskSectionResult = /* GraphQL */ `
           id
           title
           description
+          createdAt
+          updatedAt
+        }
+        taskScheduleID
+        taskSchedule {
+          id
+          startdate
+          stopdate
+          starttime
+          stoptime
+          taskListID
           createdAt
           updatedAt
         }
@@ -744,6 +840,7 @@ export const deleteTaskSectionResult = /* GraphQL */ `
       taskListResultID
       taskListResult {
         id
+        created
         started
         completed
         taskListID
@@ -751,6 +848,17 @@ export const deleteTaskSectionResult = /* GraphQL */ `
           id
           title
           description
+          createdAt
+          updatedAt
+        }
+        taskScheduleID
+        taskSchedule {
+          id
+          startdate
+          stopdate
+          starttime
+          stoptime
+          taskListID
           createdAt
           updatedAt
         }
@@ -819,9 +927,11 @@ export const createTaskItemResult = /* GraphQL */ `
         taskListResultID
         taskListResult {
           id
+          created
           started
           completed
           taskListID
+          taskScheduleID
           createdAt
           updatedAt
         }
@@ -886,9 +996,11 @@ export const updateTaskItemResult = /* GraphQL */ `
         taskListResultID
         taskListResult {
           id
+          created
           started
           completed
           taskListID
+          taskScheduleID
           createdAt
           updatedAt
         }
@@ -953,9 +1065,11 @@ export const deleteTaskItemResult = /* GraphQL */ `
         taskListResultID
         taskListResult {
           id
+          created
           started
           completed
           taskListID
+          taskScheduleID
           createdAt
           updatedAt
         }
@@ -1031,6 +1145,19 @@ export const createTaskSchedule = /* GraphQL */ `
         createdAt
         updatedAt
       }
+      taskListResults {
+        items {
+          id
+          created
+          started
+          completed
+          taskListID
+          taskScheduleID
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -1064,6 +1191,19 @@ export const updateTaskSchedule = /* GraphQL */ `
         createdAt
         updatedAt
       }
+      taskListResults {
+        items {
+          id
+          created
+          started
+          completed
+          taskListID
+          taskScheduleID
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -1096,6 +1236,19 @@ export const deleteTaskSchedule = /* GraphQL */ `
         }
         createdAt
         updatedAt
+      }
+      taskListResults {
+        items {
+          id
+          created
+          started
+          completed
+          taskListID
+          taskScheduleID
+          createdAt
+          updatedAt
+        }
+        nextToken
       }
       createdAt
       updatedAt

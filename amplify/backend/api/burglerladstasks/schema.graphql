@@ -79,9 +79,17 @@ A TaskListResult is a specific completed instance of a TaskList
 type TaskListResult 
   @model 
   @key(name: "ListListResult_k", fields: ["taskListID"])
+  @key(name: "ScheduleListResult_k", fields: ["taskScheduleID"])
 {
   id: ID!
+  """
+  Date (no time) this result was created, it should be created on the day
+  it will be started
+  """
+  created: AWSDate
+  """Date/Time this task was begun"""
   started: AWSDateTime
+  """Date/Time this task was completed"""
   completed: AWSDateTime
 
   """
@@ -89,6 +97,11 @@ type TaskListResult
   """
   taskListID: ID!
   taskList: TaskList @connection(fields: ["taskListID"])
+  """
+  The schedule associated with this list
+  """
+  taskScheduleID: ID!
+  taskSchedule: TaskSchedule @connection(fields: ["taskScheduleID"])
   """
   List of section results associated with this list result
   """
@@ -173,4 +186,10 @@ type TaskSchedule
   """
   taskListID: ID!
   taskList: TaskList @connection(fields: ["taskListID"])
+
+  """
+  A list results belonging to this TaskSchedule
+  """
+  taskListResults: [TaskListResult] @connection(keyName: "ScheduleListResult_k", fields: ["id"])
+
 }

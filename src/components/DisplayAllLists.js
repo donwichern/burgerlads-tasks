@@ -2,6 +2,8 @@ import API from '@aws-amplify/api'
 import React, {useState, useEffect} from 'react'
 import DoList from './DoList';
 
+import { useLocation } from 'react-router';
+
 // Query traversing enough levels to return complete task
 const qGetAllTaskLists = `
     query ListTaskLists {
@@ -36,9 +38,14 @@ const DisplayAllLists = () => {
 
     const [taskLists, setTaskLists] = useState([]);
 
+    let location = useLocation();
+
     // run when component is instantiated
     useEffect(() => {
         fetchTaskLists();
+
+        console.log('displayalllists >> ');
+        console.log(location.value);
     }, []);
 
     async function fetchTaskLists() {
