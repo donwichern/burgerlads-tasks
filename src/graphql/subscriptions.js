@@ -1,6 +1,76 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const onUpdateTaskItemResultBySectionResultId = /* GraphQL */ `
+  subscription OnUpdateTaskItemResultBySectionResultId(
+    $taskSectionResultID: ID!
+  ) {
+    onUpdateTaskItemResultBySectionResultId(
+      taskSectionResultID: $taskSectionResultID
+    ) {
+      id
+      result
+      note
+      timestamp
+      updatedBy
+      taskSectionResultID
+      taskSectionResult {
+        id
+        taskListResultID
+        taskListResult {
+          id
+          created
+          started
+          completed
+          taskListID
+          taskScheduleID
+          createdAt
+          updatedAt
+        }
+        taskSectionID
+        taskSection {
+          id
+          title
+          description
+          displayOrder
+          taskListID
+          createdAt
+          updatedAt
+        }
+        taskItemResults {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      taskItemID
+      taskItem {
+        id
+        name
+        description
+        displayOrder
+        resultType
+        taskSectionID
+        taskSection {
+          id
+          title
+          description
+          displayOrder
+          taskListID
+          createdAt
+          updatedAt
+        }
+        taskItemResults {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
 export const onCreateTaskList = /* GraphQL */ `
   subscription OnCreateTaskList {
     onCreateTaskList {

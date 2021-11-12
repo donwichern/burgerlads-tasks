@@ -14,7 +14,7 @@ const DoSection = ({taskSection, reportTaskProgress}) => {
 
     const [progress, setProgress] = useState(0);
     const [nitems, setNitems] = useState(1);
-    const [itemState, setItemState] = useState([]);
+    const [itemState, setItemState] = useState({});
 
     useEffect(() => {
         let taskItems = taskSection.taskItems.items;

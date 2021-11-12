@@ -138,7 +138,7 @@ A TaskItemResult is a specific completed instance of a TaskItem
 type TaskItemResult 
   @model
   @key(name: "ItemItemResult_k", fields: ["taskItemID"]) 
-  @key(name: "SectionResultItemResult_k", fields: ["taskItemID"])
+  @key(name: "SectionResultItemResult_k", fields: ["taskSectionResultID"])
 {
   id: ID!
   result: String
@@ -192,4 +192,8 @@ type TaskSchedule
   """
   taskListResults: [TaskListResult] @connection(keyName: "ScheduleListResult_k", fields: ["id"])
 
+}
+
+type Subscription {
+  onUpdateTaskItemResultBySectionResultId(taskSectionResultID: ID!): TaskItemResult @aws_subscribe(mutations:["updateTaskItemResult"])
 }

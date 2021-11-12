@@ -1,7 +1,7 @@
 import React from 'react'
 import { AmplifySignOut, withAuthenticator } from '@aws-amplify/ui-react';
 
-import DisplayAllLists from './components/DisplayAllLists';
+import DisplayChosenList from './components/DisplayChosenList';
 import UploadListFromFile from './components/UploadListFromFile';
 import ScheduleTaskList from './components/ScheduleTaskList';
 import { LocalizationProvider } from '@mui/lab';
@@ -30,7 +30,7 @@ const App = () => {
               <UploadListFromFile />
             </Route>
             <Route path='/dolist'>
-              <DisplayAllLists />
+              <DisplayChosenList />
             </Route>
             <Route path='/'>
               <DisplayActiveLists />

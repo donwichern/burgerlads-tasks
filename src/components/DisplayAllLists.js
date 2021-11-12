@@ -2,10 +2,10 @@ import API from '@aws-amplify/api'
 import React, {useState, useEffect} from 'react'
 import DoList from './DoList';
 
-import { useLocation } from 'react-router';
+import { useLocation } from 'react-router-dom';
 
 // Query traversing enough levels to return complete task
-const qGetAllTaskLists = `
+const qGetAllTaskLists = /* GraphQL */ `
     query ListTaskLists {
         listTaskLists {
             items {
@@ -44,7 +44,9 @@ const DisplayAllLists = () => {
     useEffect(() => {
         fetchTaskLists();
 
-        console.log('displayalllists >> ');
+        console.log('DisplayAllLists.useEffect() >> ');
+        // location.value should containe the information passed into the function
+        // from the calling button
         console.log(location.value);
     }, []);
 

@@ -25,6 +25,8 @@ import React, {useState, useEffect} from 'react';
 import API from '@aws-amplify/api';
 import { format } from 'date-fns';
 import { createTaskListResult as createTaskListResultMutation } from '../graphql/mutations';
+import { createTaskSectionResult as createTaskSectionResultMutation } from '../graphql/mutations';
+import { createTaskItemResult as createTaskItemResultMutation } from '../graphql/mutations';
 import { Divider, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
 
 import EditIcon from '@mui/icons-material/Edit';
@@ -49,6 +51,16 @@ const qListTaskSchedules = /* GraphQL */ `
           id
           title
           description
+          taskSections {
+                items {
+                    id
+                    taskItems {
+                        items {
+                            id
+                        }
+                    }
+                }
+            }
           createdAt
           updatedAt
         }        
@@ -76,8 +88,8 @@ const qListTaskListResults = /* GraphQL */ `
                 taskList {
                     id
                     title
-                    description
-                }
+                    description        
+                }            
                 taskScheduleID
                 taskSchedule {
                     id
@@ -85,6 +97,35 @@ const qListTaskListResults = /* GraphQL */ `
                     stopdate
                     starttime
                     stoptime
+                }
+                taskSectionResults {
+                    items {
+                        id
+                        taskSectionID
+                        taskSection {
+                            id
+                            title
+                            description
+                            displayOrder
+                        }
+                        taskItemResults {
+                            items {
+                                id
+                                result
+                                note
+                                timestamp
+                                updatedBy
+                                taskItemID
+                                taskItem {
+                                    id
+                                    name
+                                    description
+                                    displayOrder
+                                    resultType
+                                }
+                            }
+                        }
+                    }
                 }
                 createdAt
                 updatedAt
@@ -102,7 +143,8 @@ const DisplayActiveLists = () => {
    
     // on load, get today's lists and put them into a state variable
     useEffect(() => {
-        fetchTodaysLists();        
+        fetchTodaysLists();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // get all the lists scheduled for today
@@ -123,13 +165,14 @@ const DisplayActiveLists = () => {
         };
         // run the query
         let rval = await API.graphql(q);
-
+        let tschedules = rval.data.listTaskSchedules.items;
         // debug
-        //console.log(rval);
+        console.log('DisplayActiveLists.fetchTodaysSchedules');
+        console.log(tschedules);
 
         // now check to see if the lists have been started
         // get all thelists that need to be completed today
-        return (rval.data.listTaskSchedules.items);
+        return (tschedules);
     }
 
     // get all the result sets for todays scheduled lists
@@ -160,11 +203,13 @@ const DisplayActiveLists = () => {
         //console.log(q);
         // run the query
         let rval = await API.graphql(q);
+        let tresults = rval.data.listTaskListResults.items;
 
         // rval contains a list of all today's results that have been generated.
-        // if the listis missing any entries, create those entries in TaskResults        
-        console.log(rval.data.listTaskListResults.items);
-        return (rval.data.listTaskListResults.items);
+        // if the listis missing any entries, create those entries in TaskResults   
+        console.log('DisplayActiveLists.fetchTodaysResults');     
+        console.log(tresults);
+        return (tresults);
     }
 
     // create any missing result sets for today's lists
@@ -191,7 +236,7 @@ const DisplayActiveLists = () => {
             // if there isn't a result for this schedule for today
             if (isFound === false) {
                 // create the result and store it in the table
-                await createResult(tschedule.taskListID, tschedule.id);
+                await createResult(tschedule);
                 createdResult = true;
             }
 
@@ -240,14 +285,17 @@ const DisplayActiveLists = () => {
 
     // run a mutation to create a result for a list that is scheduled
     // today
-    async function createResult(taskListID, taskScheduleID) {
+    async function createResult(tschedule) {
+
+        // first step is to get the entire task list
+        let tlist = tschedule.taskList;
 
         let today = format(new Date(), 'yyyy-MM-dd');
 
         let info = {
             created: today,            
-            taskListID: taskListID,
-            taskScheduleID: taskScheduleID
+            taskListID: tlist.id,
+            taskScheduleID: tschedule.id
         };
 
         let q = {
@@ -256,7 +304,50 @@ const DisplayActiveLists = () => {
         };
 
         let rval = await API.graphql(q);
-        console.log(rval);
+        let tListResult = rval.data.createTaskListResult;
+        // need to get the list result id to use in the section result
+        // creation mutation
+        console.log('DisplayActiveListss.createResult >> createTaskListResult: ' + tListResult.taskList.title);
+        console.log(tListResult);
+
+        // now loop through the sections and create each one,
+        // plus add the items in each section
+        for(let sectionIdx=0; sectionIdx < tlist.taskSections.items.length; sectionIdx++) {
+            let tsection = tlist.taskSections.items[sectionIdx];
+            console.log(tsection);
+            info = {
+                taskListResultID: tListResult.id,
+                taskSectionID: tsection.id
+            }
+            q = {
+                query: createTaskSectionResultMutation,
+                variables: {input: info}
+            }
+            rval = await API.graphql(q);
+            let tSectionResult = rval.data.createTaskSectionResult;
+
+            console.log('DisplayActiveLists.createResult >> createTaskSectionResult: ' + tSectionResult.taskSection.title);
+            console.log(tSectionResult);
+
+            for (let itemIdx=0; itemIdx < tsection.taskItems.items.length; itemIdx++) {
+                let titem = tsection.taskItems.items[itemIdx];
+                
+                info = {
+                    taskSectionResultID: tSectionResult.id,
+                    taskItemID: titem.id
+                }
+                q = {
+                    query: createTaskItemResultMutation,
+                    variables: {input: info}
+                }
+                rval = await API.graphql(q);
+                let tItemResult = rval.data.createTaskItemResult;
+
+                console.log('DisplayActiveLists.createResult >> createTaskItemResult: ' + tItemResult.taskItem.name);
+                console.log(tItemResult);
+            }
+        }
+
     }
 
     // When a list is clicked go to the do list page

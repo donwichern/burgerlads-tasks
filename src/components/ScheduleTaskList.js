@@ -86,8 +86,8 @@ const ScheduleTaskList = () => {
         }
 
         let rval = await API.graphql(q);
-        //console.log('ScheduleTaskList.fetchTaskList');
-        //console.log(rval);
+        console.log('ScheduleTaskList.fetchTaskList');
+        console.log(rval);
         setTaskList(rval.data.getTaskList);        
     }
 
