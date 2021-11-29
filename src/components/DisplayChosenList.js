@@ -1,93 +1,33 @@
 // ------------------------------------------------------------------------ //
 import API from '@aws-amplify/api';
-import { graphqlOperation } from '@aws-amplify/api-graphql';
 import React, {useState, useEffect} from 'react';
-
+import {format} from 'date-fns';
 import {useLocation} from 'react-router-dom';
 import DoListResult from './DoListResult';
 
 // ------------------------------------------------------------------------ //
-const qGetTaskListResult = /* GraphQL */ `
-  query GetTaskListResult($id: ID!) {
-    getTaskListResult(id: $id) {
-        id
-        created
-        started
-        completed
-        taskListID
-        taskList {
-          id
-          title
-          description        
-        }
-        taskScheduleID
-        taskSchedule {
-          id
-          startdate
-          stopdate
-          starttime
-          stoptime
-          
-        }
-        taskSectionResults {
-          items {
-            id
-            taskSectionID
-            taskSection {
-              id
-              title 
-              description 
-              displayOrder 
-            }
-            taskItemResults {
-              items {
-                id
-                result 
-                note 
-                timestamp 
-                updatedBy
-                taskItemID 
-                taskItem {
-                  id
-                  name
-                  description
-                  displayOrder
-                  resultType 
-                }
-              }
-            }
-          }
-        }
-        createdAt
-        updatedAt
-      }
-    }
-  }
-`;
 
 // ------------------------------------------------------------------------ //
-const qOnUpdateTaskItemResult = /* GraphQL */ `
-  subscription OnUpdateTaskItemResult {
-    onUpdateTaskItemResult {
+const qUpdateTaskListResult = /* GraphQL */ `
+  mutation UpdateTaskListResult(
+    $input: UpdateTaskListResultInput!
+    $condition: ModelTaskListResultConditionInput
+  ) {
+    updateTaskListResult(input: $input, condition: $condition) {
       id
-      result
-      note
-      timestamp
-      updatedBy            
+      created
+      started
+      completed
+      taskListID
     }
   }
 `;
-
-// ------------------------------------------------------------------------ //
-
-
 
 // ------------------------------------------------------------------------ //
 const DisplayChosenList = () => {
 
     // state variables
     const [taskListResult, setTaskListResult] = useState(null);
-    const [refreshInterval, setRefreshInterval] = useState(0);
 
     // access the location object to get the parameters passed in 
     // from the link button
@@ -117,6 +57,28 @@ const DisplayChosenList = () => {
         // set the task list result, program flow must get to this point
         // in order to render the list using the DoListResult component
         setTaskListResult(sortSectionsAndItems(tListResult));
+
+        // If the list result hasn't been started yet, give it a start timestamp
+        if (tListResult.started === null) {
+            (async () => {
+                let datetime = new Date();
+                let day = format(datetime, 'yyyy-MM-dd');
+                let time = format(datetime, 'kk:mm:ss');
+                let now = day + 'T' + time + '.0Z'; // not add UTC timezone offset
+              
+                let info = {
+                    id : tListResult.id,
+                    started : now
+                };
+                let q = {
+                    query : qUpdateTaskListResult,
+                    variables : {input : info}
+                };
+                const res = await API.graphql(q);
+                console.log("DisplayChoseList >> Start List");
+                console.log(res);
+            })();
+        }
 
         // clear the referesh interal on close
         ////return () => clearInterval(interval);

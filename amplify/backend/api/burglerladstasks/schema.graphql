@@ -91,6 +91,8 @@ type TaskListResult
   started: AWSDateTime
   """Date/Time this task was completed"""
   completed: AWSDateTime
+  """Completion percentage of this list"""
+  completion: Float
 
   """
   The TaskList that owns this Result

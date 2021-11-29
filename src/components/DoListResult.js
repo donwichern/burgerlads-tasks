@@ -5,6 +5,22 @@ import CircularProgressWithLabel from './CircularProgressWithLabel';
 import DoSectionResult from './DoSectionResult';
 
 // ------------------------------------------------------------------------ //
+const qUpdateTaskListResult = /* GraphQL */ `
+  mutation UpdateTaskListResult(
+    $input: UpdateTaskListResultInput!
+    $condition: ModelTaskListResultConditionInput
+  ) {
+    updateTaskListResult(input: $input, condition: $condition) {
+      id
+      created
+      started
+      completed
+      taskListID
+    }
+  }
+`;
+
+// ------------------------------------------------------------------------ //
 const DoListResult = ({taskListResult}) => {
 
     // state variables
@@ -12,6 +28,7 @@ const DoListResult = ({taskListResult}) => {
     const [listProgress, setListProgress] = useState(0);
     // progress on each section of the list
     const [sectionProgressDict, setSectionProgressDict] = useState({});
+    
 
     // initialize the progress trackers
     useEffect(() => {
@@ -37,6 +54,31 @@ const DoListResult = ({taskListResult}) => {
         }
 
         setListProgress(p);
+
+        if (p >= 100.0 && taskListResult.completed === null) {
+            saveTaskComplete()
+        }
+    }
+
+    function saveTaskComplete() {
+        (async () => {
+            let datetime = new Date();
+            let day = format(datetime, 'yyyy-MM-dd');
+            let time = format(datetime, 'kk:mm:ss');
+            let now = day + 'T' + time + '.0Z'; // not add UTC timezone offset
+        
+            let info = {
+                id : taskListResult.id,
+                completed : now
+            };
+            let q = {
+                query : qUpdateTaskListResult,
+                variables : {input : info}
+            };
+            const res = await API.graphql(q);
+            console.log("DoListResult >> SaveTaskComplete");
+            console.log(res);
+        })();
     }
 
 

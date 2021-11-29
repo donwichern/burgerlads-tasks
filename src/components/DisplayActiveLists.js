@@ -356,7 +356,7 @@ const DisplayActiveLists = () => {
     // build up the view of today's active lists
     return (
         <>
-        <Typography variant='h3'>Today's Lists</Typography>
+        <Typography variant='h4'>Today's Lists</Typography>
         <List>
             {todaysResults.map(res => (
                 <React.Fragment key={res.id}>

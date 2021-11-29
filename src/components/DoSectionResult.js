@@ -6,34 +6,17 @@ import {
     Box,
     Grid,
     LinearProgress,
+    Paper,
+    Table,
+    TableBody,
+    TableContainer,
+    TableRow,
     Typography } from '@mui/material';
+import {tableCellClasses} from '@mui/material/TableCell';
 import API from '@aws-amplify/api';
-import Auth from '@aws-amplify/auth';
 import DoItemResult from './DoItemResult';
 
-// ------------------------------------------------------------------------ //
-const updateTaskItemResultMutation = /* GraphQL */ `
-    mutation UpdateTaskItemResult(
-        $input: UpdateTaskItemResultInput!
-        $condition: ModelTaskItemResultConditionInput
-    ) {
-        updateTaskItemResult(input: $input, condition: $condition) {
-            id
-            result
-            timestamp
-            updatedBy
-            taskItemID
-            taskItem {
-                id
-                name
-                description
-                displayOrder
-                resultType
-            }
-            taskSectionResultID
-        }
-    }
-`;
+
 
 // ------------------------------------------------------------------------ //
 const qOnUpdateTaskItemResultBySectionResultId = /* GraphQL */ `
@@ -61,17 +44,9 @@ const DoSectionResult = ({taskSectionResult, reportTaskProgress}) => {
     const [progress, setProgress] = useState(0);
     const [nitems, setNitems] = useState(1);
     const [itemState, setItemState] = useState([]);
-    const [userName, setUserName] = useState("");
     const [newTaskItemResult, setNewTaskItemResult] = useState({});
 
-    // -------------------------------------------------------------------- //
-    useEffect(() => {
-        Auth.currentAuthenticatedUser().then(user => {
-            setUserName(user.username);
-        }).catch(err => {
-            console.log(err);
-        });
-    }, []);
+    
 
     useEffect(() => {        
         let tmp = taskSectionResult.taskItemResults.items;
@@ -177,7 +152,7 @@ const DoSectionResult = ({taskSectionResult, reportTaskProgress}) => {
 
     // -------------------------------------------------------------------- //
     // Checkboxes
-    async function onCheckboxChange (e, id) {        
+    async function reportResultChange (id, result) {        
 
         let tmpItemState = {};        
         for (let i=0; i<taskSectionResult.taskItemResults.items.length; i++) {
@@ -193,39 +168,12 @@ const DoSectionResult = ({taskSectionResult, reportTaskProgress}) => {
             }
 
             if (id === taskItemResult.id) {
-                if (e.target.checked === true) {
-                    tmpItemState[id] = e.target.checked;
-                }
-                else {
-                    tmpItemState[id] = null;
-                }
+                tmpItemState[id] = (result != null);                
             }
         }        
 
         calculateProgress(tmpItemState, nitems);
         setItemState(tmpItemState);
-
-        // save the check state in the database
-        // update the result
-        // overwrite the object with the return value
-        // from the database so that everything stays up
-        // to date
-        let info = {
-            id: id,
-            result: tmpItemState[id],
-            note: '',
-            updatedBy: userName,
-            taskSectionResultID: taskSectionResult.id 
-        };
-
-        let q = {
-            query: updateTaskItemResultMutation,
-            variables: {input: info}
-        };
-
-        const rval = await API.graphql(q);
-        console.log(rval);
-        
     };
     
     // -------------------------------------------------------------------- //
@@ -244,7 +192,37 @@ const DoSectionResult = ({taskSectionResult, reportTaskProgress}) => {
                     </Box>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <Grid container spacing={2}>
+                    <TableContainer component={Paper}>
+                        <Table 
+                            size="small" 
+                            aria-label="List Section"
+                            sx={{
+                                [`& .${tableCellClasses.root}`]: {borderBottom: 'none'}
+                            }}
+                        >
+                            <TableBody>
+                                {taskSectionResult.taskItemResults.items.map(taskItemResult => (                                    
+                                    <DoItemResult 
+                                        key={taskItemResult.id}
+                                        taskItemResult={taskItemResult}
+                                        reportResultChange={reportResultChange}
+                                        isChecked={itemState[taskItemResult.id]}
+                                    />
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </AccordionDetails>
+            </Accordion>
+            )}
+        </>
+    )
+}
+
+// ------------------------------------------------------------------------ //
+export default DoSectionResult;
+/*
+<Grid container spacing={1}>
                         {taskSectionResult.taskItemResults.items.map(taskItemResult => (
                             <React.Fragment key={taskItemResult.id}>
                                 <DoItemResult 
@@ -255,13 +233,4 @@ const DoSectionResult = ({taskSectionResult, reportTaskProgress}) => {
                                 
                             </React.Fragment>
                         ))}
-                    </Grid>
-                </AccordionDetails>
-            </Accordion>
-            )}
-        </>
-    )
-}
-
-// ------------------------------------------------------------------------ //
-export default DoSectionResult;
+                    </Grid> */
