@@ -31,6 +31,8 @@ import { Divider, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemTe
 
 import EditIcon from '@mui/icons-material/Edit';
 import {Link as RouterLink} from 'react-router-dom';
+import { CheckCircleOutlineOutlined } from '@mui/icons-material';
+import {green} from '@mui/material/colors'
 
 
 const qListTaskSchedules = /* GraphQL */ `
@@ -367,7 +369,13 @@ const DisplayActiveLists = () => {
                             component={RouterLink}
                             to={{pathname: '/dolist', value: {res}}}
                         >
-                            <ListItemIcon><EditIcon /></ListItemIcon>
+                            <ListItemIcon> 
+                                {res.completed === null || res.completed === "" ? (
+                                    <EditIcon />
+                                ) : (
+                                    <CheckCircleOutlineOutlined sx={{color: green[500]}}/>
+                                )}
+                            </ListItemIcon>
                             <ListItemText
                                 primary={                                    
                                     <>

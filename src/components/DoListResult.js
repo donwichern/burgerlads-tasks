@@ -3,6 +3,9 @@ import React, {useState, useEffect} from 'react';
 import {Box, Grid, Paper, Typography} from '@mui/material';
 import CircularProgressWithLabel from './CircularProgressWithLabel';
 import DoSectionResult from './DoSectionResult';
+import { API } from 'aws-amplify';
+
+import {format} from 'date-fns';
 
 // ------------------------------------------------------------------------ //
 const qUpdateTaskListResult = /* GraphQL */ `
@@ -75,6 +78,7 @@ const DoListResult = ({taskListResult}) => {
                 query : qUpdateTaskListResult,
                 variables : {input : info}
             };
+            
             const res = await API.graphql(q);
             console.log("DoListResult >> SaveTaskComplete");
             console.log(res);
