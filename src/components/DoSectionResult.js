@@ -15,6 +15,7 @@ import {
 import {tableCellClasses} from '@mui/material/TableCell';
 import API from '@aws-amplify/api';
 import DoItemResult from './DoItemResult';
+import LinearProgressWithLabel from './LinearProgressWithLabel';
 
 
 
@@ -184,7 +185,7 @@ const DoSectionResult = ({taskSectionResult, reportTaskProgress}) => {
                 <AccordionSummary expandIcon={<ExpandMore />}>
                     <Box sx={{width: '100%'}}>
                         <Typography variant='h6'>{taskSectionResult.taskSection.title}</Typography>
-                        <LinearProgress
+                        <LinearProgressWithLabel
                             sx={{width: '100%'}}
                             variant='determinate'
                             value={progress}

@@ -27,7 +27,7 @@ import { format } from 'date-fns';
 import { createTaskListResult as createTaskListResultMutation } from '../graphql/mutations';
 import { createTaskSectionResult as createTaskSectionResultMutation } from '../graphql/mutations';
 import { createTaskItemResult as createTaskItemResultMutation } from '../graphql/mutations';
-import { Divider, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
+import { Divider, Grid, LinearProgress, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
 
 import EditIcon from '@mui/icons-material/Edit';
 import {Link as RouterLink} from 'react-router-dom';
@@ -142,9 +142,15 @@ const DisplayActiveLists = () => {
     // schedule and a list, this is what we will use to
     // as the data source for this component
     const [todaysResults, setTodaysResults] = useState([]);
+    // the first time this is visited each day the lists need
+    // to be generated. the generating state tells the ui to
+    // put up a spinner or other indicator that the application
+    // is doing something
+    const [isGeneratingResultSet, setIsGeneratingResultSet] = useState(true);
    
     // on load, get today's lists and put them into a state variable
     useEffect(() => {
+        //setIsGeneratingResultSet(true);
         fetchTodaysLists();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -266,6 +272,9 @@ const DisplayActiveLists = () => {
             tresults = await fetchTodaysResults(tschedules);
         }
 
+        // Order by start time
+        tresults = sortByStartTime(tresults);
+
         // set some extra properties on the results to help with rendering
         let now = format(new Date(), 'kk:mm:ss');
         console.log(now);
@@ -283,6 +292,29 @@ const DisplayActiveLists = () => {
         }
 
         setTodaysResults(tresults);
+        
+        setIsGeneratingResultSet(false);
+    }
+
+    function sortByStartTime(tresults) {
+        let tempResults = tresults;
+        tresults = tempResults.sort(
+            function(a, b) {
+                let ta = hmsStringToSec(a.taskSchedule.starttime);
+                let tb = hmsStringToSec(b.taskSchedule.starttime);
+                return(ta-tb);
+            }
+        )
+        return (tresults);
+    }
+
+    
+    function hmsStringToSec(hmsString){
+
+        const arr = hmsString.split(":");
+        const seconds = arr[0]*3600+arr[1]*60+(+arr[2]);
+        return seconds;
+    
     }
 
     // run a mutation to create a result for a list that is scheduled
@@ -359,6 +391,9 @@ const DisplayActiveLists = () => {
     return (
         <>
         <Typography variant='h4'>Today's Lists</Typography>
+        {isGeneratingResultSet === true ? (
+            <LinearProgress color="primary" sx={{width: "100%"}} />
+        ) : (<></>)}
         <List>
             {todaysResults.map(res => (
                 <React.Fragment key={res.id}>
