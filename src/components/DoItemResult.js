@@ -92,19 +92,6 @@ const ItemNote = ({taskItemResult, onNoteChange}) => {
     )
 }
 
-/*
-<Grid item xs={3}></Grid>
-            <Grid item xs={9}>
-                <TextField
-                    id="outlined-multiline-flexible"
-                    label="Note"
-                    multiline
-                    maxRows={4}
-                    size="small"
-                    fullWidth
-                />
-            </Grid> */
-
 // ------------------------------------------------------------------------ //
 const DoItemResultCheckbox = ({taskItemResult, onResultChange}) => {
 
@@ -115,7 +102,7 @@ const DoItemResultCheckbox = ({taskItemResult, onResultChange}) => {
     // -------------------------------------------------------------------- //
     // if the database object changes, update the checkbox to match
     useEffect(() => {
-        if (taskItemResult != null) {
+        if (taskItemResult !== null) {
             setIsChecked(taskItemResult.result === "true");            
         }
     }, [taskItemResult]);
@@ -152,49 +139,206 @@ const DoItemResultCheckbox = ({taskItemResult, onResultChange}) => {
 // ------------------------------------------------------------------------ //
 const DoItemResultTemperature = ({taskItemResult, onResultChange}) => {
 
-    // store initial value, if user exits the cell or presses enter and the current
-    // value is different from the inital value then update
+    // temp is the value passed in and the actual value in the field
+    const [temp, setTemp] = useState(taskItemResult.result);
+    // initial temp tracks the value of the cell when it is entered and
+    // exited so that we know whether or not we need to save a new value
+    // to the database
+    const [initialTemp, setInitialTemp] = useState("");
+
+    // If the database object changes, update the widget to match
+    useEffect(() => {
+        if (taskItemResult !== null) {
+            setTemp(taskItemResult.result);
+        }
+    }, [taskItemResult]);
 
     // onenter
+    function onFocus(e) {
+        // when the text field is entered, save the current value
+        // so that only changes to the current value are saved;
+        // in the database
+        ////console.log("onEnter: ", e.target.value, taskItemResult.result);
+        setInitialTemp(e.target.value);
+    }
 
     // onchange
+    function onChange(e) {
+        setTemp(e.target.value);
+    }
 
     // onkeypress (enter)
+    function onKeyPress(e) {
+        // if enter is pressed, save the value if it is different
+        // from the orignal value
+        if (e.code === "Enter") {
+            ////console.log("onKeyPress: ", e.target.value);
+            checkAndStoreValue();
+            
+        }
+
+    }
 
     // onexit
+    function onBlur(e) {
+        ////console.log("onExit: ", e.target.value, taskItemResult.result);
+        checkAndStoreValue();
+    }
+
+    async function checkAndStoreValue() {
+        let storeNewValue = false;
+
+        if (temp === null) {
+            if (initialTemp.trim() !== "") {
+                // change, store the new value
+               storeNewValue = true;
+            }
+        }
+        else if (temp.trim() !== initialTemp.trim()) {
+            // change, store the new value
+            storeNewValue = true;
+        }
+
+        if (storeNewValue) {
+            ////console.log("checkAndStoreValue >> ", temp.trim(), initialTemp.trim());
+            setInitialTemp(temp.trim());
+            onResultChange(taskItemResult.id, temp.trim());
+        }
+    }
+
+    function DisplayNameDescription({taskItem}) {
+        return (
+            <>
+            <Typography variant="body1">
+                {taskItem.name}
+            </Typography>
+            
+            <Typography variant="caption">
+                &nbsp;&nbsp;&nbsp;&nbsp;{taskItem.description}
+            </Typography>
+            </>
+        );
+    }
 
     return (
         <>
-            {/*
-            <TableCell align="right" width="20px" >
+            
+            <TableCell align="right" width="90px" >
                 <TextField
                     onKeyPress={onKeyPress}
                     onChange={onChange}
-                />
-                <Checkbox 
-                    checked={isChecked === true}
-                    onChange={(e) => {onCheckboxChange(e, taskItemResult.id)}}
-                />           
+                    onFocus={onFocus}
+                    onBlur={onBlur}
+                    value={(temp === null) ? "" : temp}
+                />    
             </TableCell>
-            */}
-            <TableCell scope="row" colSpan={2}>{taskItemResult.taskItem.name}</TableCell>
+            
+            <TableCell scope="row" colSpan={2}>
+                <DisplayNameDescription taskItem={taskItemResult.taskItem} />
+            </TableCell>
         </>
     )
 }
 
 // ------------------------------------------------------------------------ //
 const DoItemResultTextbox = ({taskItemResult, onResultChange}) => {
+
+    // itemText is the value actually stored in the field
+    const [itemText, setItemText] = useState(taskItemResult.result);
+    // initial temp tracks the value of the cell when it is entered and
+    // exited so that we know whether or not we need to save a new value
+    // to the database
+    const [initialItemText, setInitialItemText] = useState("");
+
+    // If the database object changes, update the widget to match
+    useEffect(() => {
+        if (taskItemResult !== null) {
+            setItemText(taskItemResult.result);
+        }
+    }, [taskItemResult]);
+
+    // onenter
+    function onFocus(e) {
+        // when the text field is entered, save the current value
+        // so that only changes to the current value are saved;
+        // in the database
+        ////console.log("onEnter: ", e.target.value, taskItemResult.result);
+        setInitialItemText(e.target.value);
+    }
+
+    // onchange
+    function onChange(e) {
+        setItemText(e.target.value);
+    }
+
+    // onkeypress (enter)
+    function onKeyPress(e) {
+        // if enter is pressed, save the value if it is different
+        // from the orignal value
+        if (e.code === "Enter") {
+            ////console.log("onKeyPress: ", e.target.value);
+            checkAndStoreValue();
+            
+        }
+
+    }
+
+    // onexit
+    function onBlur(e) {
+        ////console.log("onExit: ", e.target.value, taskItemResult.result);
+        checkAndStoreValue();
+    }
+
+    async function checkAndStoreValue() {
+        let storeNewValue = false;
+
+        if (itemText === null) {
+            if (initialItemText.trim() !== "") {
+                // change, store the new value
+               storeNewValue = true;
+            }
+        }
+        else if (itemText.trim() !== initialItemText.trim()) {
+            // change, store the new value
+            storeNewValue = true;
+        }
+
+        if (storeNewValue) {
+            ////console.log("checkAndStoreValue >> ", temp.trim(), initialTemp.trim());
+            setInitialItemText(itemText.trim());
+            onResultChange(taskItemResult.id, itemText.trim());
+        }
+    }
+
+    function DisplayNameDescription({taskItem}) {
+        return (
+            <>
+            <Typography variant="body1">
+                {taskItem.name}
+            </Typography>
+            
+            <Typography variant="caption">
+                &nbsp;&nbsp;&nbsp;&nbsp;{taskItem.description}
+            </Typography>
+            </>
+        );
+    }
+    
     return (
         <>
-            {/*
-            <TableCell align="right" width="20px" >
-                <Checkbox 
-                    checked={isChecked === true}
-                    onChange={(e) => {onCheckboxChange(e, taskItemResult.id)}}
-                />           
+            <TableCell align="right" width="90px" >
+                <TextField
+                    onKeyPress={onKeyPress}
+                    onChange={onChange}
+                    onFocus={onFocus}
+                    onBlur={onBlur}
+                    value={(itemText === null) ? "" : itemText}
+                />    
             </TableCell>
-            */}
-            <TableCell scope="row" colSpan={2}>{taskItemResult.taskItem.name}</TableCell>
+            
+            <TableCell scope="row" colSpan={2}>
+                <DisplayNameDescription taskItem={taskItemResult.taskItem} />
+            </TableCell>
         </>
     )
 }
@@ -234,7 +378,7 @@ const DoItemResult = ({taskItemResult, reportResultChange}) => {
         };
 
         const rval = await API.graphql(q);
-        console.log(rval);
+        //console.log(rval);
     }
 
     async function onNoteChange(id, text) {

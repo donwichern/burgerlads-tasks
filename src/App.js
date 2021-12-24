@@ -8,6 +8,7 @@ import { LocalizationProvider } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { Container, CssBaseline } from '@mui/material';
 import DisplayActiveLists from './components/DisplayActiveLists';
+import DisplayAllLists from './components/DisplayAllLists';
 
 import {
   BrowserRouter as Router,
@@ -31,6 +32,9 @@ const App = () => {
             </Route>
             <Route path='/dolist'>
               <DisplayChosenList />
+            </Route>
+            <Route path='/displayall'>
+              <DisplayAllLists />
             </Route>
             <Route path='/'>
               <DisplayActiveLists />

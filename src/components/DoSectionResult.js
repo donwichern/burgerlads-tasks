@@ -72,7 +72,18 @@ const DoSectionResult = ({taskSectionResult, reportTaskProgress}) => {
                 taskItemResult.updatedBy = newTaskItemResult.updatedBy;
                 tmp[i] = taskItemResult;                
 
-                tmpItemState[taskItemResult.id] = (newTaskItemResult.result === "true") ? true : false;
+                // this needs to update to true if there is a value entered,
+                // otherwise false
+                if (newTaskItemResult.result === null ||
+                    newTaskItemResult.result === "" ||
+                    newTaskItemResult.result === false ||
+                    newTaskItemResult.result === "false") 
+                {
+                    tmpItemState[taskItemResult.id] = false;
+                }
+                else {
+                    tmpItemState[taskItemResult.id] = true;
+                }
                 
                 taskSectionResult.taskItemResults.items = tmp;
             }    
@@ -134,7 +145,7 @@ const DoSectionResult = ({taskSectionResult, reportTaskProgress}) => {
     // -------------------------------------------------------------------- //
     function calculateProgress(itemStateCurrent, numItems) {
         if (taskSectionResult.ready === false) return;
-
+        
         let ctr = 0;
         for (let k in itemStateCurrent) {
             if (itemStateCurrent[k]) {
@@ -222,16 +233,3 @@ const DoSectionResult = ({taskSectionResult, reportTaskProgress}) => {
 
 // ------------------------------------------------------------------------ //
 export default DoSectionResult;
-/*
-<Grid container spacing={1}>
-                        {taskSectionResult.taskItemResults.items.map(taskItemResult => (
-                            <React.Fragment key={taskItemResult.id}>
-                                <DoItemResult 
-                                    taskItemResult={taskItemResult}
-                                    onCheckboxChange={onCheckboxChange}
-                                    isChecked={itemState[taskItemResult.id]}
-                                />
-                                
-                            </React.Fragment>
-                        ))}
-                    </Grid> */
